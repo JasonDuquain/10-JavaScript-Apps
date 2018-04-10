@@ -23,6 +23,8 @@ function newTweet(e) {
     
     /// Read the textarea value
     const tweet = document.querySelector('#tweet').value;
+    document.querySelector('#tweet').value = ''
+    document.querySelector('#tweet').focus();
     
     /// Create the remove btn
     const removeBtn = document.createElement('a');
@@ -32,11 +34,7 @@ function newTweet(e) {
     /// Create an LI element
     let li = document.createElement('li');
     li.textContent = tweet;
-    
-    /// Add the remove btn to each tweet
     li.append(removeBtn);
-    
-    /// Add to the list
     tweetList.append(li);
     
     /// Add to local storage
@@ -53,8 +51,9 @@ function removeTweet(e) {
         e.target.parentNode.remove();
     } 
 
-    /// Remove from storage
     
+    /// Remove from storage
+    removeTweetLocalStorage(e.target.parentElement.textContent);
 }
 
 /// Adds the tweets into the local storage
@@ -82,7 +81,6 @@ function getTweetsFromStorage() {
 function localStorageOnLoad() {
     let tweets = getTweetsFromStorage();
     
-    
     /// Loop thru storage and then print the values
     tweets.forEach(function(tweet) {
         
@@ -104,18 +102,22 @@ function localStorageOnLoad() {
     });
 }
 
-function removeTweetLocalStorage(tweet) {
+function removeTweetLocalStorage(tweet) {   
     //get Tweets from storage
-    
-    
+    let tweets = getTweetsFromStorage();
+   
     // Remove the 'X' from the tweets
-    
+    let tweetDelete = tweet.slice(0, tweet.length -1);
     
     /// Look thru the tweets and remove the tweet thats equal
-    
+    tweets.forEach(function(tweetLS, index) {
+       if (tweetDelete === tweetLS) {
+           tweets.splice(index, 1);
+       } 
+    });
     
     // Save the data
-    
+    localStorage.setItem('tweets', JSON.stringify(tweets));
 }
 
 
