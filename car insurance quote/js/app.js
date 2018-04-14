@@ -1,6 +1,6 @@
 
 const form = document.querySelector('#request-quote');
-const html = new HTMLUI();
+
 
 
 eventListeners();
@@ -34,117 +34,121 @@ function eventListeners() {
 
 /////////////////////Objects
 
-function Insurance(make, year, level) {
-    this.make = make;
-    this.year = year;
-    this.level = level;
-}
-
-Insurance.prototype.calculateQuotation = function(insurance) {
-    let price;
-    const base = 2000;
-    
-    let make = insurance.make;
-    /* 1 =  American 15%/2 = Asian 05%/3 = European 35%  */
-    switch(make) {
-        case "1":
-            price = base * 1.15;
-            break;
-        case "2":
-            price = base * 1.05;
-            break;
-        case "3":
-            price = base * 1.35;
-            break;
+class Insurance {
+    constructor(make, year, level) {
+        this.make = make;
+        this.year = year;
+        this.level = level;    
     }
     
-    const year = insurance.year;
-    const difference = this.getYearDifference(year);
-    // Each year the cost of the insurance is going to be 3% cheaper
-    price = price - ((difference * 3) * price) / 100;
-    
-    const level = insurance.level;
-    price = this.calculateLevel(price, level);
-    return price;
-}
+    calculateQuotation(insurance) {
+        let price;
+        const base = 2000;
 
-Insurance.prototype.getYearDifference = function(year) {
-    return new Date().getFullYear() - year;
-}
+        let make = insurance.make;
+        /* 1 =  American 15%/2 = Asian 05%/3 = European 35%  */
+        switch(make) {
+            case "1":
+                price = base * 1.15;
+                break;
+            case "2":
+                price = base * 1.05;
+                break;
+            case "3":
+                price = base * 1.35;
+                break;
+        }
 
-Insurance.prototype.calculateLevel = function(price, level) {
-    /* Basic insurace will increase the value by 30%
-       Complete insurace will increase the value by 50% */
-    if (level === 'basic') {
-        price = price * 1.30;
-    } else {
-        price = price * 1.50;
+        const year = insurance.year;
+        const difference = this.getYearDifference(year);
+        // Each year the cost of the insurance is going to be 3% cheaper
+        price = price - ((difference * 3) * price) / 100;
+
+        const level = insurance.level;
+        price = this.calculateLevel(price, level);
+        return price;
     }
-    return price;
-} 
 
+    getYearDifference(year) {
+        return new Date().getFullYear() - year;
+    }
 
-function HTMLUI() {
+    calculateLevel(price, level) {
+        /* Basic insurace will increase the value by 30%
+           Complete insurace will increase the value by 50% */
+        if (level === 'basic') {
+            price = price * 1.30;
+        } else {
+            price = price * 1.50;
+        }
+        return price;
+    } 
     
 }
 
-HTMLUI.prototype.displayYears = function() {
-    
-    const max = new Date().getFullYear();
-    const min = max - 20;
-    const selectYears = document.querySelector('#year');    
-    for (let i = max; i >= min; i--) {
-        let option = document.createElement('option');
-        option.value = i;
-        option.textContent = i;
-        selectYears.append(option);
+
+
+
+class HTMLUI {
+ 
+    displayYears() {
+        const max = new Date().getFullYear();
+        const min = max - 20;
+        const selectYears = document.querySelector('#year');    
+        for (let i = max; i >= min; i--) {
+            let option = document.createElement('option');
+            option.value = i;
+            option.textContent = i;
+            selectYears.append(option);
+        }
+
+    }
+
+    displayError(message) {
+        const div = document.createElement('div');
+        div.classList = 'error';
+        div.innerHTML = `
+           <p>${message}</p> 
+        `;
+        form.prepend(div);
+        setTimeout(() => div.remove(), 2000);
+    }
+
+    showResults(price, insurance) {
+        const result = document.querySelector('#result');
+        const div = document.createElement('div');
+        let make = insurance.make;
+        switch(make) {
+            case "1": 
+                make = 'american'
+                break;
+            case "2": 
+                make = 'asian'
+                break;
+            case "3": 
+                make = 'european'
+                break;
+        }
+
+        div.innerHTML = `
+            <p class="header">Summary</p>
+            <p>Make: ${make}</p>
+            <p>Year: ${insurance.year}</p>
+            <p class="total">Total: $ ${price.toFixed(2)}</p>
+        `;
+
+        const spinner = document.querySelector('#loading img');
+        spinner.style.display = 'block';
+        setTimeout(()=> {
+            spinner.style.display = 'none';
+            result.append(div);
+        }, 2111);
+
     }
     
 }
 
-HTMLUI.prototype.displayError = function(message) {
-    const div = document.createElement('div');
-    div.classList = 'error';
-    div.innerHTML = `
-       <p>${message}</p> 
-    `;
-    form.prepend(div);
-    setTimeout(() => div.remove(), 2000);
-}
-
-HTMLUI.prototype.showResults = function(price, insurance) {
-    const result = document.querySelector('#result');
-    const div = document.createElement('div');
-    let make = insurance.make;
-    switch(make) {
-        case "1": 
-            make = 'american'
-            break;
-        case "2": 
-            make = 'asian'
-            break;
-        case "3": 
-            make = 'european'
-            break;
-    }
-    
-    div.innerHTML = `
-        <p class="header">Summary</p>
-        <p>Make: ${make}</p>
-        <p>Year: ${insurance.year}</p>
-        <p class="total">Total: $ ${price.toFixed(2)}</p>
-    `;
-    
-    const spinner = document.querySelector('#loading img');
-    spinner.style.display = 'block';
-    setTimeout(()=> {
-        spinner.style.display = 'none';
-        result.append(div);
-    }, 2111);
-    
-    
-    
-}
+const html = new HTMLUI();
  
 
 /* 1 =  American 15%/2 = Asian 05%/3 = European 35%  */
