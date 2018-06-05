@@ -98,26 +98,33 @@ function getCoursesFromStorage() {
 
 // remove course from the dom
 function removeCourse(e) {
-
+    let course, courseId;
+    
      // Remove from the dom
     if (e.target.classList.contains('remove')) {
         e.target.parentElement.parentElement.remove();
+        course = e.target.parentElement.parentElement;
+        courseId = course.querySelector('a').getAttribute('data-id');
     } 
     
      // remove from the local storage
-     
+     removeCourseLocalStorage(courseId);
 }
 
 // remove from local storage
 function removeCourseLocalStorage(id) {
      // get the local storage data
-     
+     let coursesLS = getCoursesFromStorage();
 
      // loop trought the array and find the index to remove
-     
+     coursesLS.forEach(function(courseLS, index) {
+         if (courseLS.id === id) {
+             coursesLS.splice(index, 1);
+         }
+     })
 
      // Add the rest of the array
-     
+     localStorage.setItem('courses', JSON.stringify(coursesLS));
 }
 
 // Clears the shopping cart
@@ -127,24 +134,24 @@ function clearCart() {
         shoppingCartContent.removeChild(shoppingCartContent.firstChild);
     }
      
-
      // Clear from Local Storage
-     
+     clearLocalStorage();
 }
+
 // Clears the whole local storage
 function clearLocalStorage() {
-     
+    localStorage.clear(); 
 }
 
 // Loads when document is ready and print courses into shopping cart
 function getFromLocalStorage() {
-     
+     let coursesLS = getCoursesFromStorage();
 
      // LOOP through the courses and print into the cart
-     
-	 
-	 /* 
-	 row.innerHTML = `
+     coursesLS.forEach(function(course) {
+         const row = document.createElement('tr');
+         
+         row.innerHTML = `
                <tr>
                     <td>
                          <img src="${course.image}" width=100>
@@ -156,7 +163,9 @@ function getFromLocalStorage() {
                     </td>
                </tr>
           `;
-	 */
+         shoppingCartContent.append(row);
+     });
+
 	 
 	 
      
