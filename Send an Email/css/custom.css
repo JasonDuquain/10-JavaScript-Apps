@@ -36,3 +36,10 @@ form {
 #resetBtn {
     float: right;
 }
+
+#sendBtn:disabled, #sendBtn[disabled] {
+    cursor: not-allowed !important; 
+    pointer-events: all !important;
+}
+
+
