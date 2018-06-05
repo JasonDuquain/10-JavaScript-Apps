@@ -42,13 +42,14 @@ function getCourseInfo(course) {
          price: course.querySelector('.price span').textContent,
          id: course.querySelector('a').getAttribute('data-id')
      }
-     console.log(courseInfo);
+     
+     addIntoCart(courseInfo);
 }
 
 // Display the selected course into the shopping cart
 function addIntoCart(course) {
      // create a <tr>
-     
+     const row = document.createElement('tr');
 
      // Build the template
      row.innerHTML = `
@@ -64,36 +65,45 @@ function addIntoCart(course) {
           </tr>
      `;
      // Add into the shopping cart
-     
+     shoppingCartContent.append(row);
 
      // Add course into Storage
-     
+     saveIntoStorage(course);
 }
 
 // Add the courses into the local storage
 function saveIntoStorage(course) {
-     
+     let courses = getCoursesFromStorage();
 
      // add the course into the array
-     
+     courses.push(course);
 
      // since storage only saves strings, we need to convert JSON into String
-     
+     localStorage.setItem('courses', JSON.stringify(courses));
 }
 
 // Get the contents from storage
 function getCoursesFromStorage() {
-
+    let courses;
+    
+    if (localStorage.getItem('courses') === null) {
+        courses = [];
+    } else {
+        courses = JSON.parse(localStorage.getItem('courses'));
+    }
      
+    return courses;
 
 }
 
 // remove course from the dom
 function removeCourse(e) {
-     let course, courseId;
 
      // Remove from the dom
-     
+    if (e.target.classList.contains('remove')) {
+        e.target.parentElement.parentElement.remove();
+    } 
+    
      // remove from the local storage
      
 }
@@ -113,7 +123,9 @@ function removeCourseLocalStorage(id) {
 // Clears the shopping cart
 function clearCart() {
      // shoppingCartContent.innerHTML = '';
-
+    while(shoppingCartContent.firstChild) {
+        shoppingCartContent.removeChild(shoppingCartContent.firstChild);
+    }
      
 
      // Clear from Local Storage
