@@ -30,7 +30,7 @@ function eventListeners() {
 // App Initialization
 function appInit() {
      // disable the send button on load
-     
+     sendBtn.disabled = 'true';
 }
 
 function sendEmail(e) {
@@ -49,13 +49,15 @@ function sendEmail(e) {
 
 // Validate the fields
 function validateField() {
-     
+     let errors;
 
      // Validate the Length of the field
-     
+     validateLength(this);
 
      // Validate the email
-     
+     if (this.type === 'email') {
+         validateEmail(this);
+     }
 
      // Both will return errors, then check if there're any errors
      
@@ -63,14 +65,29 @@ function validateField() {
      // Check that the inputs are not empty
      
 }
+
 // Validate the Length of the fields
 function validateLength(field) {
-     
+     if (field.value.length > 0) {
+         field.style.borderBottomColor = 'green';
+         field.classList.remove('error');
+     } else {
+         field.style.borderBottomColor = 'red';
+         field.classList.add('error');
+     }
 }
 
 // validate email (checks for @ in the value )
 function validateEmail(field) {
-     
+    let emailText = field.value;
+    if (emailText.indexOf('@') !== -1) {
+         field.style.borderBottomColor = 'green';
+         field.classList.remove('error');
+     } else {
+         field.style.borderBottomColor = 'red';
+         field.classList.add('error');
+     } 
+    
 }
 
 // Reset the form
